@@ -1,6 +1,9 @@
-# Code & Chill documentation
+# Code & Chill Lagos documentation
 
-The site is a fixed-viewport experience controlled through five cinematic scenes instead of a traditional scrolling page.
+This folder contains the project and handoff documentation.
 
-- [Implementation guide](implementation.md) — architecture, scene input, transitions, Three.js performance, and RSVP behavior.
-- [Project README](../README.md) — local development and project checks.
+- [Implementation guide](implementation.md) — page architecture, sections, design direction, responsive behavior, accessibility, images, dependencies and local development.
+- [Review checklist](review-checklist.md) — practical checks for code review and interview handoff.
+- [Project README](../README.md) — overview, setup commands, structure, contribution notes and launch checklist.
+
+The current site is a standard responsive React website with native page scrolling. It does not use the former GSAP/Three.js scene experience.
