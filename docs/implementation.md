@@ -2,46 +2,45 @@
 
 ## Overview
 
-The app is a multi-page event website for Code & Chill Lagos. It uses React 19 and TypeScript, bundled by Vite. Tailwind CSS 4 is loaded from `src/index.css`; the page's art direction and responsive layout live in `src/App.css`.
+The experience is built with React, TypeScript, Vite, Tailwind CSS, GSAP, and vanilla Three.js. `src/App.tsx` mounts the experience controller. The active experience is a fixed viewport; users move through scenes without native document scrolling.
 
-## Page sections
+## Architecture
 
-`src/App.tsx` provides shared navigation and imports the footer component, then selects an imported page by URL path. The page content enters with a short slide and fade animation. The pages are:
+- `src/experience/ImmersiveExperience.tsx` owns active-scene state, navigation, touch/wheel/keyboard input, reduced-motion-aware text reveals, and the transition lock.
+- `src/experience/SceneWorld.ts` creates and disposes the Three.js renderer, camera, lights, particles, scene groups, pointer parallax, and GSAP camera/object transitions. It is dynamically imported so Three.js loads after the interactive shell.
+- `src/experience/SceneContent.tsx` renders the accessible React content for each scene.
+- `src/experience/sceneConfig.ts` contains labels, event-format placeholders, activity content, and the community invitation URL configuration.
+- `src/components/Arrow.tsx` supplies the shared directional icon.
+- `src/experience/Experience.css` styles the dark editorial scene UI and mobile adaptations. `src/index.css` sets global viewport, font, and Tailwind rules.
 
-1. `/` — Home hero, event introduction, experience cards, links to other pages, and a final RSVP call to action.
-2. `/day` — Event information and five schedule sessions.
-3. `/speakers` — Three speaker profiles.
-4. `/rsvp` — RSVP form with Regular and VIP ticket options.
+## Navigation and transitions
 
-The shared schedule and speaker data live in `src/data/event.ts`. Update those arrays to change the displayed items. Shared navigation, `SiteFooter`, `Arrow`, and `FeatureCard` components are imported where they are used. Shared navigation includes the theme toggle and appears on each route.
+Wheel and trackpad input move one scene at a time. Arrow keys, Page Up/Down, Home/End, touch swipes, the fixed navigation, and previous/next controls are also supported. A transition lock prevents overlapping animations. GSAP moves the previous content out, animates a staggered tile shutter, reveals new copy, and moves the camera between distinct Three.js scene groups.
 
-## Styling and responsive behavior
+The event gallery, activity list, and RSVP form are intentional inner scroll regions. Wheel input can scroll those areas before advancing the scene. On touch screens they retain their own scroll behavior.
 
-`src/index.css` imports Tailwind and sets global typography, rendering defaults, and reduced-motion behavior. `src/App.css` defines the visual system, layout, breakpoints, interactions, and theme variables. The design uses a warm paper background, restrained olive tones, a lime accent, orange details, and italic display type.
+## Three.js environment
 
-The layout shifts from two-column hero and RSVP arrangements on wide screens to stacked content on narrow screens. The schedule hides its category label on small screens to preserve room for session names. Speaker cards switch from a three-column row to a single column on phones. Navigation links load independent paths instead of scrolling to section anchors.
+The five scene groups use a torus knot and wireframe shell, a connected-node network, floating event panels, a linked activity structure, and a set of closing rings. A restrained particle field, ambient and point lighting, pointer parallax, and small continuous object motion provide depth. Geometry and materials are disposed on unmount. Pixel ratio and particle count are lower on narrow screens. The canvas has no pointer events, so React controls remain interactive.
 
-The theme button toggles the `.dark` class on the root `.site` element. Theme colors are CSS custom properties, so both modes share the same component styles.
+The Three.js module is loaded dynamically. If WebGL initialization fails, the experience retains all scene content and input controls with a CSS visual fallback.
 
-## RSVP behavior
+## Content and external links
 
-The form uses React state and a submit handler. It checks that the full name contains at least two characters and that the email has a basic valid format. Invalid entries receive a clear inline message and focus moves to the relevant field. A valid submission displays a friendly confirmation and resets the fields.
+The next listed gathering uses the project event details: 12 December 2026 at Landmark Centre, Lagos. Other event cards are explicitly marked as format ideas with dates to come. The community invite URL is intentionally empty until the organizers provide a real destination; configure `COMMUNITY_INVITE_URL` in `sceneConfig.ts`.
 
-The form does not send or persist data. To collect real RSVPs, connect the handler to an approved API or form service, then add loading and server-error states. Avoid logging personal data to the browser console.
+The RSVP form checks name and email and displays an inline confirmation. It does not contact a server. No member counts or social profiles are invented.
 
-## Accessibility details
+## Accessibility and motion
 
-- Navigation and form controls use semantic elements and labels.
-- Form messages are announced through a live status region.
-- The theme control has a descriptive accessible label.
-- Images have speaker-specific alternative text; decorative SVG arrows are hidden from assistive technology.
-- Reduced-motion preferences disable nonessential animation and smooth scrolling.
+- Scene navigation uses native buttons and announces the active scene.
+- Keyboard controls include arrow keys, Page Up/Down, Home, and End.
+- A skip link focuses the active scene heading.
+- Form fields have labels and status messages use a polite live region.
+- The Three.js canvas is hidden from assistive technology; the scene content remains in semantic HTML.
+- Reduced-motion settings stop ambient 3D movement and make scene transitions immediate.
 
-## External assets
-
-The hero and speaker photography is loaded from Unsplash URLs. Google Fonts are loaded in `src/index.css`. These assets need an internet connection. For an offline or production deployment with fixed assets, download licensed image/font files into `src/assets` and update the references.
-
-## Development commands
+## Commands
 
 ```bash
 npm install

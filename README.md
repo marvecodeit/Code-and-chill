@@ -1,6 +1,6 @@
 # Code & Chill Lagos
 
-A responsive website for a fictional Lagos youth tech meetup. It has independent Home, The Day, Speakers, and RSVP pages, with a light/dark theme toggle.
+An immersive, scene-based experience for a Lagos developer community. Move through five fixed-viewport scenes with wheel, trackpad, touch, keyboard, or the scene navigation. The environment uses Three.js; GSAP coordinates scene, camera, and content transitions.
 
 ## Run locally
 
@@ -16,24 +16,14 @@ npm run build
 npm run lint
 ```
 
-## Documentation
+## Scenes
 
-- [Documentation index](docs/README.md)
-- [Implementation notes](docs/implementation.md)
+1. Home — community introduction and event date/location.
+2. Community — purpose and values, without invented member counts.
+3. Events — replaceable event format ideas and a route to the RSVP flow.
+4. What we do — community activities.
+5. Join us — configurable invitation CTA and local RSVP form.
 
-## Project structure
+The RSVP form is front-end only. It validates and displays a confirmation but does not transmit or store registration data. Set `COMMUNITY_INVITE_URL` in `src/experience/sceneConfig.ts` when the real invite link is available.
 
-```text
-src/
-  App.tsx       Shared site shell and page routing
-  App.css       Component layout, responsive styles, and themes
-  index.css     Tailwind import and global styles
-  pages/        Independent page components
-  components/   Shared UI components
-  data/         Event schedule and speaker data
-docs/
-  README.md
-  implementation.md
-```
-
-Routes: `/`, `/day`, `/speakers`, and `/rsvp`. RSVP submission is currently client-side only; it validates the fields and displays a confirmation on the page without sending data to a server.
+See the [documentation index](docs/README.md) and [implementation guide](docs/implementation.md) for architecture, interaction, accessibility, and performance notes.

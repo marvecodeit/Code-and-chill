@@ -1,6 +1,0 @@
-import { Arrow } from '../components/Arrow'
-import { speakers } from '../data/event'
-
-export default function SpeakersPage() {
-  return <section className="speakers-section section-pad page-content"><div className="page-pad"><p className="eyebrow">GOOD PEOPLE, GOOD PERSPECTIVES <span className="eyebrow-slash">/ 02</span></p><div className="section-heading speaker-heading"><div><h1 className="page-title">People worth<br /><span className="serif-italic">pulling up a chair for.</span></h1></div><p className="section-intro">No big egos, no gatekeeping. Just generous people with things to share and stories worth hearing.</p></div><div className="speaker-grid">{speakers.map((speaker, index) => <article className={`speaker-card speaker-${speaker.color}`} key={speaker.name}><div className="speaker-image-wrap"><img src={`https://images.unsplash.com/${speaker.image}?auto=format&fit=crop&w=900&q=85`} alt={speaker.name} loading="lazy" /><span className="speaker-num">0{index + 1}</span><span className="speaker-arrow"><Arrow diagonal /></span></div><div className="speaker-info"><h2>{speaker.name}</h2><p>{speaker.role}</p></div></article>)}</div><p className="speaker-footnote"><span>✳</span> More lovely humans to be announced soon.</p><a className="button button-dark speakers-cta" href="/rsvp">Come meet them <Arrow /></a></div></section>
-}
