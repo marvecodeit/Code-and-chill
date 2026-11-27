@@ -1,115 +1,170 @@
 # Code & Chill Lagos
 
-A responsive, editorial-style website for the Code & Chill Lagos tech community. The experience is built around real community photography, clear storytelling, event discovery and a straightforward invitation to join.
+The community website for **Code & Chill Lagos** — a place for developers, designers, builders and people interested in technology to connect, learn, share ideas and take part in community events.
 
-**Current implementation:** React + TypeScript + Vite + Tailwind CSS. The site uses normal document scrolling and responsive layouts. GSAP and Three.js are not part of the application's runtime dependencies.
+This repository contains the frontend application and its Cloudflare Workers deployment configuration. The site is designed as a responsive, photography-led website with straightforward navigation and a focus on the people and activities behind the community.
 
-## Preview
+## Project at a glance
 
-- Repository: https://github.com/marvecodeit/Code-and-chill
-- Working branch: `update`
+- **Frontend:** React 19, TypeScript and Vite 8
+- **Styling:** Tailwind CSS 4 and application CSS
+- **Package manager:** npm
+- **Hosting:** Cloudflare Workers (static assets)
+- **Build output:** `dist/`
+- **Worker name:** `code-and-chill`
 
-## Features
-
-- Responsive header with mobile navigation.
-- Photographic hero section and prominent community call to action.
-- About and community introduction.
-- Event/activity cards.
-- What-we-do and community value sections.
-- Join/community invitation section and footer.
-- Semantic page sections, keyboard-visible focus styles and reduced-motion support.
-- Responsive layouts for desktop, tablet and mobile.
-
-## Tech stack
-
-| Technology | Purpose |
-| --- | --- |
-| React | Component-based UI |
-| TypeScript | Static typing |
-| Vite | Local development and production bundling |
-| Tailwind CSS | CSS tooling |
-| CSS | Layout, responsive behavior, typography and interaction states |
-
-No animation framework or WebGL/3D renderer is required for the current website.
+The application uses normal page scrolling and responsive layouts. It does not depend on GSAP, Three.js or a WebGL scene.
 
 ## Getting started
 
 ### Requirements
 
-- Node.js compatible with the Vite version in `package.json`
+- Node.js 22.16.0 (the repository includes an `.nvmrc`)
 - npm
 
-### Install and run
+If you use nvm, select the project Node version:
 
 ```bash
-npm install
+nvm install
+nvm use
+```
+
+Install dependencies and start the development server:
+
+```bash
+npm ci
 npm run dev
 ```
 
-Vite prints the local development URL in the terminal (normally `http://localhost:5173`).
+Vite prints the local development URL in your terminal. Open that URL in your browser.
 
-### Production build
+> Use `npm ci` when setting up from the committed lockfile. If you intentionally change dependencies, use `npm install` and commit the updated lockfile.
+
+## Useful commands
+
+| Command | What it does |
+| --- | --- |
+| `npm run dev` | Starts the Vite development server |
+| `npm run lint` | Runs Oxlint |
+| `npm run build` | Type-checks the project and creates the production build |
+| `npm run preview` | Serves the generated Vite build locally |
+
+Before opening a pull request, run:
+
+```bash
+npm run lint
+npm run build
+```
+
+The production build is written to `dist/`. This directory is generated output; do not commit it.
+
+## Repository structure
+
+```text
+.
+├── public/                 # Static files copied to the build output
+├── src/
+│   ├── assets/             # Assets imported by the application
+│   ├── App.tsx             # Main page composition and UI state
+│   ├── index.css           # Global styles and responsive design rules
+│   └── main.tsx            # React entry point
+├── index.html              # Vite HTML entry
+├── package.json            # Scripts and dependencies
+├── package-lock.json       # Reproducible npm dependency lockfile
+├── tsconfig*.json          # TypeScript configuration
+├── vite.config.ts          # Vite configuration
+├── wrangler.jsonc          # Cloudflare Workers configuration
+└── .nvmrc                  # Node.js version
+```
+
+Some UI sections and content are currently composed in `src/App.tsx`. When making larger changes, keep the page readable and extract reusable components or data into focused files rather than allowing the main component to become difficult to maintain.
+
+## How the Cloudflare deployment works
+
+This project is configured as a **Cloudflare Worker serving static assets**, not as a Cloudflare Pages project.
+
+The root `wrangler.jsonc` tells Wrangler:
+
+- which Worker to deploy (`code-and-chill`);
+- where Vite writes the built site (`./dist`);
+- to use SPA fallback handling so client-side routes can resolve to `index.html`.
+
+The deployment sequence is:
+
+1. Cloudflare checks out the configured Git branch.
+2. It installs dependencies.
+3. It runs `npm run build`.
+4. Vite generates the `dist/` directory.
+5. Wrangler deploys the Worker and its static assets.
+
+For a local production-build check:
 
 ```bash
 npm run build
 npm run preview
 ```
 
-### Lint
+For local testing through the Workers runtime, build first and then run:
 
 ```bash
-npm run lint
+npx wrangler dev
 ```
 
-Run the build and lint commands before submitting changes. A successful local build has not been claimed by this documentation update; run the checks in your environment or CI before merging.
+The production deployment command configured in Cloudflare Workers Builds is:
 
-## Project structure
-
-```text
-.
-├── docs/
-│   ├── README.md
-│   └── implementation.md
-├── public/
-│   ├── favicon.svg
-│   └── icons.svg
-├── src/
-│   ├── App.tsx          # Page sections, content and mobile menu state
-│   ├── index.css        # Global styles, design system and responsive rules
-│   ├── main.tsx         # React application entry point
-│   └── assets/          # Local image and starter assets
-├── index.html
-├── package.json
-└── vite.config.ts
+```bash
+npx wrangler deploy
 ```
 
-## Content and launch checklist
+Do not use `wrangler pages deploy` for this Worker configuration. Do not add a committed `dist/` folder; Cloudflare generates it during the build.
 
-Before publishing the site, confirm and replace any sample or placeholder content:
+### Cloudflare environment and credentials
 
-- Add the official WhatsApp/community invite URL to the join CTA.
-- Confirm event names, dates, venues and registration links with the organizers.
-- Replace generic social links with the community's official profiles.
-- Confirm that the selected photographs are approved for public use and add locally hosted optimized versions if required.
-- Add analytics, form handling or an RSVP backend only when the project has a real provider and privacy requirements.
-- Check all external links, image loading, mobile navigation and keyboard interactions.
+Cloudflare build settings should use:
 
-Do not publish invented event details, member counts, testimonials or official social handles.
+- **Build command:** `npm run build`
+- **Production deploy command:** `npx wrangler deploy`
+- **Node.js:** `22.16.0`
 
-## Documentation
+Keep Cloudflare credentials in the Cloudflare dashboard's secure build settings or environment variables. Never commit API tokens, account secrets or other credentials to this repository.
 
-- [Documentation index](docs/README.md)
-- [Implementation guide](docs/implementation.md)
-- [Pull request review checklist](docs/review-checklist.md)
+If a build reports an expired or deleted build token, update the token selected in Workers Builds settings. If Wrangler reports an API authentication or permission error, check the API token used by the deployment and confirm it has the required permissions for the target account and Worker.
+
+## Working on the website
+
+A few guidelines for contributors:
+
+- Keep the experience responsive across mobile, tablet and desktop.
+- Prefer semantic HTML and accessible controls.
+- Ensure interactive elements work with a keyboard and have visible focus states.
+- Respect reduced-motion preferences; avoid adding motion that makes the site harder to use.
+- Use appropriately sized, optimized images. Confirm that community photos are approved for public use.
+- Keep content factual. Do not invent event dates, venues, attendance figures, testimonials or official social accounts.
+- Do not add large animation or 3D dependencies unless there is a clear product need.
+- Keep secrets and private configuration out of source control.
+
+Before submitting UI changes, check the affected sections at narrow and wide viewport sizes and test navigation, links and interactive states.
+
+## Content and launch checks
+
+Before a public release, confirm:
+
+- Community join links point to the official destination.
+- Event names, dates, venues and registration links are approved by the organizers.
+- Social links point to official community profiles.
+- Images are licensed or approved for publication.
+- Any forms, analytics or external integrations have an agreed provider and appropriate privacy information.
 
 ## Contributing
 
-1. Create a feature branch from the agreed base branch.
-2. Keep changes focused and follow the existing TypeScript/React conventions.
+1. Start from the latest agreed base branch and create a focused feature branch.
+2. Make changes that solve one clear problem at a time.
 3. Run `npm run lint` and `npm run build`.
-4. Test desktop and mobile layouts, keyboard navigation and reduced-motion behavior.
-5. Open a pull request with a summary, screenshots and any known limitations.
+4. Test the relevant desktop and mobile layouts.
+5. Open a pull request describing what changed, why it changed and how it was tested. Include screenshots for visual changes and note any known limitations.
+
+Avoid committing generated build output, local environment files, credentials or unrelated formatting changes.
 
 ## License
 
-No license is specified in this repository yet. Ask the project owner before reusing or redistributing the source.
+No license is currently declared for this repository. Please contact the project owner before reusing, modifying or redistributing this code.
