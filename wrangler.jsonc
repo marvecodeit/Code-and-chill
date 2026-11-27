@@ -1,6 +1,9 @@
 {
-  "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "code-and-chill-lagos",
-  "compatibility_date": "2026-11-27",
-  "pages_build_output_dir": "./dist"
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "code-and-chill",
+  "compatibility_date": "2026-11-26",
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "single-page-application"
+  }
 }
